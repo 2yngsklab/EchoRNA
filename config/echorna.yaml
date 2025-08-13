@@ -1,0 +1,41 @@
+# ── general ───────────────────────────────────────────
+device: "cuda:0"        # torch.device string
+seed:   42
+dataset: "EchoRNA"
+
+# ── data ──────────────────────────────────────────────
+data_root: "/lightyear/scratch/daniilm/project/rnadesign/rnadiffusion/traindata"
+batch_size: 20
+max_pad: 6
+pad_thr: 40
+pad_pr: 0.75
+
+# ── model / adaptor ──────────────────────────────────
+lora_config:
+  r: 64
+  lora_alpha: 128
+  lora_dropout: 0.01
+  merge_weights: false
+  target_modules: ["q_proj", "v_proj", "k_proj", "out_proj", "dense"]
+
+adaptor_config:
+  embed_dim: 640
+  trans_dim: 640
+  num_heads: 20
+  num_trans_layers: 8
+  mlp_ratio: 4
+  time_dim: 128
+  dropout_rate: 0.05
+  gvp_layers: 6
+  node_feature: ["one-hot", "esm-2", "esm-if"]
+
+# ── optimisation ─────────────────────────────────────
+optimizer:
+  lr: 0.001
+  weight_decay: 0.001
+epochs: 50
+accumulation_steps: 42
+
+# ── I/O ───────────────────────────────────────────────
+save_root: "/lightyear/scratch/daniilm/project/rnadesign/rnadiffusion/model_weights"
+experiment_name: "250512_echorna"
