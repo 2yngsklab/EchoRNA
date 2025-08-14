@@ -1,0 +1,54 @@
+device: "cuda:0"  # Change to "cuda:0", "cpu", etc. as needed
+seed: 42
+
+# Model and sampling settings
+model_tag: "gumbell"
+sampling_strategy: "vanilla"  # Options: "gumbel_argmax", "vanilla"
+decoding_strategy: "reparam-uncond-deterministic1.0-cosine"  # Options: "reparam-uncond-stochastic1.0-linear", "reparam-uncond-deterministic-cosine"
+
+# Dataset settings
+dataset: "EchoRNA"
+data_dir: "/lightyear/scratch/daniilm/project/rnadesign/rnadiffusion/traindata/RF2NA/data"
+batch_size: 20
+
+# Model checkpoint settings
+checkpoint_base_path: "/lightyear/scratch/daniilm/project/rnadesign/rnadiffusion/model_weights/250326_const_LR_1e-3_RF2NA"
+epochs: [200]  # List of epochs to process
+
+# Length settings
+lengths: ["OG"]  # Can be integers or "OG" for original length
+
+# Complex list (optional - if empty, processes all complexes in dataset)
+complex_list: []  # Example: ["1A9N", "2F8K"] - leave empty to process all
+
+# Output settings
+save_dir: "Sample_RF2NA"
+
+# LoRA configuration
+lora_config:
+  r: 64
+  lora_alpha: 128
+  lora_dropout: 0.01
+  merge_weights: false
+  target_modules:
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "out_proj"
+    - "dense"
+
+# Adaptor configuration
+adaptor_config:
+  embed_dim: 640
+  trans_dim: 640
+  num_heads: 20
+  num_trans_layers: 8
+  mlp_ratio: 4
+  time_dim: 128
+  dropout_rate: 0.05
+  lora_bias: "lora_only"
+  gvp_layers: 6
+  node_feature:
+    - "one-hot"
+    - "esm-2"
+    - "esm-if"
