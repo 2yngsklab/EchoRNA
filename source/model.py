@@ -105,6 +105,12 @@ class RNP_adapter(nn.Module):
             self.embed_dihedral = DihedralFeatures(self.node_h_dim[0])
     
     def initialize_RNALM(self):
+        """
+        Initialize RNA language model with optional LoRA adaptation.
+        
+        If lora_config is None, freezes all RNA encoder parameters.
+        Otherwise, applies LoRA and marks only LoRA parameters as trainable.
+        """
         if self.lora_config == None:
             self.rna_encoder.eval()
             for param in self.rna_encoder.parameters():
@@ -114,6 +120,17 @@ class RNP_adapter(nn.Module):
             mark_only_lora_as_trainable(self.rna_encoder, bias=self.lora_bias)
 
     def struct_forward(self, batch, **kwargs):
+        """
+        Forward pass through protein structure encoder using GVP-GNN.
+        
+        Args:
+            batch: PyTorch Geometric batch containing protein structure data
+                   with node_s, node_v, edge_s, edge_v, edge_index, and coords
+            **kwargs: Additional keyword arguments (unused)
+            
+        Returns:
+            gvp_output: Protein structure embeddings from GVP encoder
+        """
         h_V = (batch.node_s, batch.node_v)
         h_E = (batch.edge_s, batch.edge_v)
         edge_index = batch.edge_index
@@ -136,7 +153,26 @@ class RNP_adapter(nn.Module):
                 mask_x=None, 
                 mask_gvp=None,
                 distance_bias=None, distance_bias_scale=10,
-                return_attn=False): 
+                return_attn=False):
+        """
+        Forward pass through the RNA-protein adapter model.
+        
+        Args:
+            protein: PyTorch Geometric batch with protein structure data
+            rna: Dictionary containing 'input_ids' for RNA sequences
+            t: Current diffusion timestep (int or tensor)
+            num_timesteps: Total number of diffusion steps (default: 100)
+            mask_x: Optional mask for RNA tokens
+            mask_gvp: Optional mask for protein nodes
+            distance_bias: Optional distance-based attention bias
+            distance_bias_scale: Scaling factor for distance bias (default: 10)
+            return_attn: Whether to return cross-attention weights (default: False)
+            
+        Returns:
+            ans: Predicted logits for RNA tokens (batch_size, seq_len, vocab_size)
+            fm_logits: RNA-FM language model logits
+            cross_attention_weights: List of attention weights from each transformer layer
+        """ 
         gvp_output = self.struct_forward(protein)
         x = self.rna_encoder(rna["input_ids"], repr_layers=[12])
         fm_logits, x = x['logits'], x["representations"][12]

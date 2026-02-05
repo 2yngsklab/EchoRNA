@@ -40,12 +40,21 @@ class GVP(nn.Module):
         self.dummy_param = nn.Parameter(torch.empty(0))
 
     def forward(self, x):
-        '''
-        :param x: tuple (s, V) of `torch.Tensor`,
-                  or (if vectors_in is 0), a single `torch.Tensor`
-        :return: tuple (s, V) of `torch.Tensor`,
-                 or (if vectors_out is 0), a single `torch.Tensor`
-        '''
+        """
+        Forward pass through Geometric Vector Perceptron.
+        
+        Args:
+            x: Tuple of (s, V) where:
+               - s: Scalar features of shape (N, si)
+               - V: Vector features of shape (N, vi, 3)
+               Or a single tensor if vectors_in is 0
+               
+        Returns:
+            Tuple of (s, V) where:
+            - s: Output scalar features of shape (N, so)
+            - V: Output vector features of shape (N, vo, 3)
+            Or a single tensor if vectors_out is 0
+        """
         if self.vi:
             s, v = x
             v = torch.transpose(v, -1, -2) # (N, v_i, 3) > (N, 3, v_i)
@@ -122,11 +131,19 @@ class GVPConv(nn.Module):
         self.message_func = nn.Sequential(*module_list)
 
     def forward(self, x, edge_index, edge_attr):
-        '''
-        :param x: tuple (s, V) of `torch.Tensor`
-        :param edge_index: array of shape [2, n_edges]
-        :param edge_attr: tuple (s, V) of `torch.Tensor`
-        '''
+        """
+        Forward pass for GVP-based graph convolution.
+        
+        Args:
+            x: Tuple of (s, V) node features where:
+               - s: Scalar node features
+               - V: Vector node features
+            edge_index: Edge connectivity of shape [2, n_edges]
+            edge_attr: Tuple of (s, V) edge features
+            
+        Returns:
+            Updated node features as tuple (s, V)
+        """
         
         x_s, x_v = x
         src, dst = edge_index

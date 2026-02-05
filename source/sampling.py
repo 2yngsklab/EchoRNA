@@ -3,11 +3,16 @@ import os
 
 def topk_masking(scores, cutoff_len, stochastic=False, temp=1.0):
     """
-    scores: [b, n]
-    cutoff_len: [b, 1]
-    stochastic: bool, whether to add noise to select top_k or not
-    returns:
-        mask: [b, n], with 1 if the token is in top-k lowest scores, 0 otherwise
+    Create a mask for the top-k lowest scores.
+    
+    Args:
+        scores: Score tensor of shape (batch_size, seq_len)
+        cutoff_len: Number of lowest scores to mask, shape (batch_size, 1)
+        stochastic: Whether to add Gumbel noise for stochastic selection
+        temp: Temperature for Gumbel noise (default: 1.0)
+    
+    Returns:
+        Boolean mask with True for tokens in top-k lowest scores
     """
     if stochastic:
         gumbel_noise = -torch.log(-torch.log(torch.rand_like(scores) + 1e-8) + 1e-8)
@@ -21,6 +26,17 @@ def topk_masking(scores, cutoff_len, stochastic=False, temp=1.0):
 
 
 def sample_from_categorical(logits=None, temperature=1.0):
+    """
+    Sample tokens from categorical distribution.
+    
+    Args:
+        logits: Unnormalized logits of shape (batch_size, seq_len, vocab_size)
+        temperature: Sampling temperature (0 = argmax, >0 = stochastic)
+        
+    Returns:
+        tokens: Sampled token indices
+        scores: Log probabilities of sampled tokens
+    """
     if temperature:
         dist = torch.distributions.Categorical(logits=logits.div(temperature))
         tokens = dist.sample()
@@ -30,19 +46,38 @@ def sample_from_categorical(logits=None, temperature=1.0):
     return tokens, scores
 
 def stochastic_sample_from_categorical(logits=None, temperature=1.0, noise_scale=1.0):
+    """
+    Sample tokens from categorical distribution with Gumbel noise.
+    
+    Args:
+        logits: Unnormalized logits
+        temperature: Sampling temperature
+        noise_scale: Scale of Gumbel noise to add (default: 1.0)
+        
+    Returns:
+        tokens: Sampled token indices
+        scores: Scores of sampled tokens
+    """
     gumbel_noise = -torch.log(-torch.log(torch.rand_like(logits) + 1e-8) + 1e-8)
     logits = logits + noise_scale * gumbel_noise
     tokens, scores = sample_from_categorical(logits, temperature)
     return tokens, scores
 
 def top_k_top_p_filtering(logits, top_k=0, top_p=0.95, filter_value=-float('Inf')):
-    """ Filter a distribution of logits using top-k and/or nucleus (top-p) filtering
-        Args:
-            logits: logits distribution shape (vocabulary size)
-            top_k >0: keep only top k tokens with highest probability (top-k filtering).
-            top_p >0.0: keep the top tokens with cumulative probability >= top_p (nucleus filtering).
-                Nucleus filtering is described in Holtzman et al. (http://arxiv.org/abs/1904.09751)
-        Basic outline taken from https://gist.github.com/thomwolf/1a5a29f6962089e871b94cbd09daf317
+    """
+    Filter a distribution of logits using top-k and/or nucleus (top-p) filtering.
+    
+    Args:
+        logits: Logits distribution shape (batch_size, vocab_size)
+        top_k: Keep only top k tokens with highest probability (top-k filtering)
+        top_p: Keep the top tokens with cumulative probability >= top_p (nucleus filtering)
+        filter_value: Value to use for filtered logits (default: -inf)
+        
+    Returns:
+        Filtered logits with same shape as input
+        
+    Reference:
+        Nucleus filtering is described in Holtzman et al. (http://arxiv.org/abs/1904.09751)
     """
     ori_shape = logits.shape
     logits = logits.reshape(-1, ori_shape[-1])

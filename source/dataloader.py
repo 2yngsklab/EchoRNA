@@ -10,6 +10,15 @@ LIST_NODE_FEAT={"one-hot", "esm-2", "esm-if"}
 
 
 def process_distance_matrix(complex):
+    """
+    Pad distance matrix with first and last rows for BOS/EOS tokens.
+    
+    Args:
+        complex: Distance matrix tensor of shape (seq_len, protein_len)
+        
+    Returns:
+        Padded distance matrix with shape (seq_len+2, protein_len)
+    """
     padded_matrix = torch.cat([
         complex[0].unsqueeze(0),  # First row at the beginning
         complex,
@@ -55,6 +64,12 @@ class RBPDataset(Dataset):
         self.split = split
         
     def load_data(self):
+        """
+        Load dataset file paths from text file.
+        
+        Returns:
+            List of data identifiers (file names without extensions)
+        """
         with open(self.dataset_dir, "r") as f:
             txt = f.readlines()
             
@@ -64,7 +79,11 @@ class RBPDataset(Dataset):
         return len(self.data)
 
     def shuffle_dataset(self):
-        """Shuffle the dataset entries"""
+        """
+        Shuffle the dataset entries in-place.
+        
+        This is useful for randomizing the order of training samples between epochs.
+        """
         random.shuffle(self.data)
         
     def __getitem__(self, idx):

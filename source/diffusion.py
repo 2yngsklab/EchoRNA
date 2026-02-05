@@ -13,6 +13,17 @@ from source.model import *
 from source.sampling import *
 
 class our_diffusion(nn.Module):
+    """
+    Discrete diffusion model for RNA sequence generation conditioned on protein structures.
+    
+    This class implements a discrete diffusion process where RNA tokens are gradually
+    masked and then denoised using the RNP_adapter model. The diffusion process can
+    use either linear or cosine noise schedules.
+    
+    Args:
+        adaptor_config: Configuration dictionary for RNP_adapter model
+        num_diff_step: Number of diffusion timesteps (default: 100)
+    """
     def __init__(self, adaptor_config, num_diff_step=100):
         super(our_diffusion, self).__init__()
         self.model = RNP_adapter(**adaptor_config)
@@ -25,6 +36,16 @@ class our_diffusion(nn.Module):
     
         
     def get_non_special_sym_mask(self, rna_ids, partial_masks=None):
+        """
+        Create a mask for non-special tokens (excludes PAD, BOS, EOS).
+        
+        Args:
+            rna_ids: RNA token IDs tensor
+            partial_masks: Optional additional mask to apply
+            
+        Returns:
+            Boolean mask where True indicates non-special tokens
+        """
         non_special_sym_mask = (
             rna_ids.ne(self.pad_id)
         )
@@ -65,6 +86,22 @@ class our_diffusion(nn.Module):
                 mask_x=None, mask_gvp=None, 
                 attention_bias=None, bias_scale=1.0,
                 return_attn=False):
+        """
+        Forward pass through the diffusion model.
+        
+        Args:
+            protein: Protein structure data (PyTorch Geometric batch)
+            rna: RNA token IDs tensor
+            t: Current diffusion timestep
+            mask_x: Optional mask for RNA tokens
+            mask_gvp: Optional mask for protein nodes
+            attention_bias: Optional distance-based attention bias
+            bias_scale: Scaling factor for attention bias (default: 1.0)
+            return_attn: Whether to return attention weights (default: False)
+            
+        Returns:
+            Output from RNP_adapter model (logits, fm_logits, attention_weights)
+        """
         return self.model(protein, {"input_ids":rna}, t,
                           mask_x=mask_x, mask_gvp=mask_gvp,
                           num_timesteps=self.num_diff_step,
@@ -74,6 +111,23 @@ class our_diffusion(nn.Module):
     
     def compute_loss(self, protein, rna, attention_bias=None, 
                      bias_scale=1.0, return_attn=False, weighting="constant"):
+        """
+        Compute diffusion training loss.
+        
+        Args:
+            protein: Protein structure data
+            rna: Dictionary containing 'input_ids' and 'pad_mask'
+            attention_bias: Optional distance-based attention bias
+            bias_scale: Scaling factor for attention bias (default: 1.0)
+            return_attn: Whether to return attention weights (default: False)
+            weighting: Loss weighting scheme - 'linear' or 'constant' (default: 'constant')
+            
+        Returns:
+            logits: Model predictions
+            target: Ground truth RNA tokens
+            loss_mask: Mask indicating which tokens to compute loss on
+            weight: Per-sample loss weights
+        """
         target = rna['input_ids']
 
         t1 = torch.randint(
@@ -111,6 +165,18 @@ class our_diffusion(nn.Module):
         return logits, target, loss_mask, weight
 
     def initialize_output_tokens(self, batch, partial_masks=None, **kwargs):
+        """
+        Initialize output tokens for generation by masking all non-special tokens.
+        
+        Args:
+            batch: Dictionary containing 'input_ids'
+            partial_masks: Optional mask indicating tokens to preserve
+            **kwargs: Additional keyword arguments (unused)
+            
+        Returns:
+            output_tokens: Initialized tokens with maskable positions set to MASK token
+            output_scores: Zero-initialized scores tensor
+        """
         tokens = batch['input_ids']
         if tokens is None:
             raise NotImplementedError
@@ -122,6 +188,23 @@ class our_diffusion(nn.Module):
 
             
     def resample_conditional(self, protein, _tokens, _scores, ratio, scale, step):
+        """
+        Conditional resampling to fix tokens that appear too frequently.
+        
+        This function identifies sequences where a single token appears more frequently
+        than the specified ratio and resamples those positions to increase diversity.
+        
+        Args:
+            protein: Protein structure data
+            _tokens: Current token predictions
+            _scores: Current prediction scores
+            ratio: Maximum allowed frequency for any single token (e.g., 0.8 = 80%)
+            scale: Noise scale for stochastic sampling
+            step: Current generation step
+            
+        Returns:
+            None (modifies _tokens and _scores in-place)
+        """
         to_be_resample_idx = []
         resample_input = []
         resample_input_mask = []

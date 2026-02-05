@@ -7,6 +7,24 @@ from torch.nn import functional as F
 
 
 def label_smoothed_nll_loss(lprobs, target, epsilon, ignore_index=None, reduce=True):
+    """
+    Compute label-smoothed negative log-likelihood loss.
+    
+    Label smoothing is a regularization technique that prevents the model
+    from becoming overconfident by distributing some probability mass to
+    all classes.
+    
+    Args:
+        lprobs: Log probabilities from the model
+        target: Ground truth labels
+        epsilon: Label smoothing factor (0 = no smoothing, 1 = uniform)
+        ignore_index: Index to ignore in loss computation (e.g., padding)
+        reduce: Whether to sum the loss (default: True)
+        
+    Returns:
+        loss: Label-smoothed cross-entropy loss
+        nll_loss: Standard negative log-likelihood loss (without smoothing)
+    """
     flag = False
     if target.dim() == lprobs.dim() - 1:
         flag = True
@@ -32,11 +50,28 @@ def label_smoothed_nll_loss(lprobs, target, epsilon, ignore_index=None, reduce=T
 
 
 class CrossEntropyLoss(nn.CrossEntropyLoss):
+    """
+    Custom cross-entropy loss with label smoothing and masking support.
+    
+    This class extends PyTorch's CrossEntropyLoss to support:
+    - Label smoothing for regularization
+    - Token masking (e.g., for padding tokens)
+    - Per-sample weighting
+    - Detailed logging outputs including perplexity
+    """
     def forward(self, scores: Tensor, target: Tensor, mask=None, weights=None) -> Tensor:
         """
-          scores: [N, ..., C], unnormalized scores
-          target: [N, ...]
-          mask: [N, ...], where elements with `True` are allowed and `False` are masked-out
+        Compute cross-entropy loss with optional masking and weighting.
+        
+        Args:
+            scores: Unnormalized logits of shape (batch_size, seq_len, num_classes)
+            target: Ground truth labels of shape (batch_size, seq_len)
+            mask: Boolean mask where True indicates valid tokens (default: None)
+            weights: Per-sample loss weights (default: None)
+            
+        Returns:
+            weighted_loss: Weighted and averaged cross-entropy loss
+            logging_output: Dictionary containing loss statistics and metrics
         """
         n_tokens = target.numel()
         n_nonpad_tokens = target.ne(2).long().sum() - target.size(0)

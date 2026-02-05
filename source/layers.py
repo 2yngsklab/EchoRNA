@@ -13,6 +13,13 @@ from source.GVP import *
 from source.util import *
 
 class Normalize(nn.Module):
+    """
+    Layer normalization module with learnable gain and bias parameters.
+    
+    Args:
+        features: Number of features to normalize
+        epsilon: Small constant for numerical stability (default: 1e-6)
+    """
     def __init__(self, features, epsilon=1e-6):
         super(Normalize, self).__init__()
         self.gain = nn.Parameter(torch.ones(features))
@@ -20,6 +27,16 @@ class Normalize(nn.Module):
         self.epsilon = epsilon
 
     def forward(self, x, dim=-1):
+        """
+        Apply normalization to input tensor.
+        
+        Args:
+            x: Input tensor
+            dim: Dimension to normalize over (default: -1)
+            
+        Returns:
+            Normalized tensor
+        """
         mu = x.mean(dim, keepdim=True)
         sigma = torch.sqrt(x.var(dim, keepdim=True) + self.epsilon)
         gain = self.gain
@@ -33,6 +50,15 @@ class Normalize(nn.Module):
         return gain * (x - mu) / (sigma + self.epsilon) + bias
 
 class DihedralFeatures(nn.Module):
+    """
+    Embed dihedral angle features from protein/RNA backbone coordinates.
+    
+    Computes phi, psi, and omega dihedral angles and embeds them as
+    sine/cosine features for use in structure-aware models.
+    
+    Args:
+        node_embed_dim: Dimension of the output node embeddings
+    """
     def __init__(self, node_embed_dim):
         """ Embed dihedral angle features. """
         super(DihedralFeatures, self).__init__()
@@ -43,7 +69,16 @@ class DihedralFeatures(nn.Module):
         self.norm_nodes = Normalize(node_embed_dim)
 
     def forward(self, X):
-        """ Featurize coordinates as an attributed graph """
+        """
+        Featurize coordinates as dihedral angle embeddings.
+        
+        Args:
+            X: Coordinates tensor of shape (batch_size, seq_len, 3, 3)
+               representing backbone atoms
+               
+        Returns:
+            Normalized dihedral angle embeddings
+        """
         with torch.no_grad():
             V = self._dihedrals(X)
         V = self.node_embedding(V)
@@ -52,6 +87,17 @@ class DihedralFeatures(nn.Module):
 
     @staticmethod
     def _dihedrals(X, eps=1e-7, return_angles=False):
+        """
+        Compute dihedral angles from backbone coordinates.
+        
+        Args:
+            X: Backbone coordinates
+            eps: Small epsilon for numerical stability
+            return_angles: If True, return raw angles instead of sin/cos features
+            
+        Returns:
+            Dihedral angle features (sin and cos of phi, psi, omega)
+        """
         # First 3 coordinates are [N, CA, C] / [C4', C1', N1/N9]
         if len(X.shape) == 4:
             X = X[..., :3, :].reshape(X.shape[0], 3*X.shape[1], 3)
@@ -101,17 +147,45 @@ def geo_batch(batch):
 
 
 class GaussianFourierProjection(nn.Module):
-    """Gaussian random features for encoding time steps."""  
+    """
+    Gaussian random Fourier features for encoding time steps.
+    
+    Maps scalar time values to high-dimensional features using random
+    Fourier features with fixed (non-trainable) frequencies.
+    
+    Args:
+        embed_dim: Dimension of the output embedding
+        scale: Scale factor for random frequencies (default: 10.0)
+    """  
     def __init__(self, embed_dim, scale=10.):
         super().__init__()
         # Randomly sample weights during initialization. These weights are fixed 
         # during optimization and are not trainable.
         self.W = nn.Parameter(torch.randn(embed_dim // 2) * scale, requires_grad=False)
     def forward(self, x):
+        """
+        Project time values to Fourier features.
+        
+        Args:
+            x: Time values of shape (batch_size,)
+            
+        Returns:
+            Fourier features of shape (batch_size, embed_dim)
+        """
         x_proj = x[:, None] * self.W[None, :] * 2 * np.pi
         return torch.cat([torch.sin(x_proj), torch.cos(x_proj)], dim=-1)
 
 class TimeConditionedLayerNorm(nn.Module):
+    """
+    Layer normalization conditioned on time embeddings.
+    
+    Applies adaptive layer normalization where the scale and shift
+    parameters are predicted from time embeddings.
+    
+    Args:
+        hidden_size: Size of the input features
+        time_embed_dim: Dimension of time embeddings
+    """
     def __init__(self, hidden_size, time_embed_dim):
         super(TimeConditionedLayerNorm, self).__init__()
         self.layer_norm = nn.LayerNorm(hidden_size, eps = 1e-6,
@@ -126,6 +200,16 @@ class TimeConditionedLayerNorm(nn.Module):
         self.fc_shift.bias.data.fill_(0)
 
     def forward(self, x, time_embed):
+        """
+        Apply time-conditioned layer normalization.
+        
+        Args:
+            x: Input features of shape (batch_size, seq_len, hidden_size)
+            time_embed: Time embeddings of shape (batch_size, time_embed_dim)
+            
+        Returns:
+            Normalized and scaled features
+        """
         normalized_x = self.layer_norm(x)
         scale = self.silu(self.fc_scale(time_embed)).unsqueeze(1)  # Adjust dimensions for broadcasting
         shift = self.silu(self.fc_shift(time_embed)).unsqueeze(1)  # Adjust dimensions for broadcasting
@@ -133,12 +217,30 @@ class TimeConditionedLayerNorm(nn.Module):
         return normalized_x * (1 + scale) + shift
 
 class RotaryPositionalEmbedding(nn.Module):
+    """
+    Rotary Position Embedding (RoPE) for attention mechanisms.
+    
+    Applies rotary positional embeddings by rotating query/key representations
+    in a rotation matrix defined by position-dependent frequencies.
+    
+    Args:
+        dim: Dimension of the embedding (should be even)
+    """
     def __init__(self, dim):
         super().__init__()
         self.dim = dim
         inv_freq = 1.0 / (10000 ** (torch.arange(0, dim // 2).float() / (dim // 2)))
         self.register_buffer("inv_freq", inv_freq)
     def forward(self, seq_len):
+        """
+        Generate cosine and sine embeddings for given sequence length.
+        
+        Args:
+            seq_len: Length of the sequence
+            
+        Returns:
+            Tuple of (cos, sin) embeddings of shape (1, 1, seq_len, dim//2)
+        """
         positions = torch.arange(seq_len, device=self.inv_freq.device, dtype=torch.float)
         freqs = torch.einsum('i,j->ij', positions, self.inv_freq)  # [seq_len, dim//2]
         cos = freqs.cos()  # [seq_len, dim//2]
@@ -148,6 +250,17 @@ class RotaryPositionalEmbedding(nn.Module):
         return cos, sin
 
 class CrossAttention(nn.Module):
+    """
+    Cross-attention module with rotary positional embeddings.
+    
+    Implements cross-attention between RNA queries and protein keys/values
+    with optional distance-based biasing.
+    
+    Args:
+        embed_dim: Dimension of embeddings
+        num_heads: Number of attention heads
+        dropout_rate: Dropout probability (default: 0.1)
+    """
     def __init__(self, embed_dim, num_heads, dropout_rate=0.1):
         super(CrossAttention, self).__init__()
         self.num_heads = num_heads
@@ -164,6 +277,16 @@ class CrossAttention(nn.Module):
         self.rotary_emb = RotaryPositionalEmbedding(self.head_dim)
     
     def apply_rotary_pos_emb(self, q, seq_len):
+        """
+        Apply rotary positional embeddings to query tensor.
+        
+        Args:
+            q: Query tensor of shape (batch_size, num_heads, seq_len, head_dim)
+            seq_len: Sequence length
+            
+        Returns:
+            Query tensor with rotary embeddings applied
+        """
         cos, sin = self.rotary_emb(seq_len)
         q_half_dim = self.head_dim // 2
         q1, q2 = q[..., :q_half_dim], q[..., q_half_dim:]
@@ -175,6 +298,20 @@ class CrossAttention(nn.Module):
         return q_embed
 
     def forward(self, query, key, value, distance_bias=None, key_padding_mask=None):
+        """
+        Forward pass of cross-attention.
+        
+        Args:
+            query: Query tensor (batch_size, query_len, embed_dim)
+            key: Key tensor (batch_size, key_len, embed_dim)
+            value: Value tensor (batch_size, key_len, embed_dim)
+            distance_bias: Optional distance-based attention bias
+            key_padding_mask: Optional mask for key padding
+            
+        Returns:
+            output: Attention output (batch_size, query_len, embed_dim)
+            attention_weights: Attention weights (batch_size, num_heads, query_len, key_len)
+        """
         Q = self.query(query).view(query.size(0), query.size(1), self.num_heads, self.head_dim).transpose(1, 2)
         K = self.key(key).view(key.size(0), key.size(1), self.num_heads, self.head_dim).transpose(1, 2)
         V = self.value(value).view(value.size(0), value.size(1), self.num_heads, self.head_dim).transpose(1, 2)

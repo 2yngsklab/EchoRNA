@@ -3,6 +3,16 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class LoRA_Config:
+    """
+    Configuration class for Low-Rank Adaptation (LoRA) parameters.
+    
+    Args:
+        r: Rank of the low-rank decomposition
+        lora_alpha: Scaling factor for LoRA updates
+        lora_dropout: Dropout probability for LoRA layers
+        merge_weights: Whether to merge LoRA weights with original weights
+        target_modules: List of module names to apply LoRA to
+    """
     def __init__(self, r, lora_alpha, lora_dropout, merge_weights, target_modules):
         self.r = r
         self.lora_alpha = lora_alpha
@@ -11,6 +21,16 @@ class LoRA_Config:
         self.target_modules = target_modules
 
 class LoRALayer(nn.Module):
+    """
+    LoRA (Low-Rank Adaptation) layer that wraps an original linear layer.
+    
+    Implements the LoRA method by adding low-rank matrices A and B such that
+    the effective weight becomes: W' = W + scaling * A @ B
+    
+    Args:
+        original_layer: The original nn.Linear layer to adapt
+        config: LoRA_Config object containing hyperparameters
+    """
     def __init__(self, original_layer, config: LoRA_Config):
         super(LoRALayer, self).__init__()
         self.original_layer = original_layer
@@ -32,10 +52,25 @@ class LoRALayer(nn.Module):
             self.dropout = lambda x: x  # No-op
     @property
     def weight(self):
+        """
+        Property that redirects weight access to the original layer's weight.
+        
+        Returns:
+            The original layer's weight tensor
+        """
         # This redirects calls to weight to the original layer's weight
         return self.original_layer.weight
 
     def forward(self, x):
+        """
+        Forward pass applying LoRA adaptation.
+        
+        Args:
+            x: Input tensor
+            
+        Returns:
+            Output tensor after applying W' = W + scaling * dropout(A) @ dropout(B)
+        """
         # Apply dropout before the matrix multiplication
         A_dropout = self.dropout(self.lora_A)
         B_dropout = self.dropout(self.lora_B)
@@ -45,6 +80,15 @@ class LoRALayer(nn.Module):
         return f'{self.__class__.__name__}(\n  (original_layer): {self.original_layer},\n  (lora_A): Parameter of size {self.lora_A.size()},\n  (lora_B): Parameter of size {self.lora_B.size()}\n)'
 
 def print_trainable_parameters(model):
+    """
+    Print the number and percentage of trainable parameters in the model.
+    
+    Args:
+        model: PyTorch model
+        
+    Returns:
+        Tuple of (trainable_params, all_params)
+    """
     trainable_params = 0
     all_param = 0
     #for param in model.parameters():
@@ -58,6 +102,16 @@ def print_trainable_parameters(model):
     return trainable_params, all_param
 
 def apply_lora_to_model(model, config):
+    """
+    Apply LoRA adaptation to specified modules in the model.
+    
+    Args:
+        model: PyTorch model to apply LoRA to
+        config: LoRA_Config object specifying which modules to adapt
+        
+    Returns:
+        Modified model with LoRA layers
+    """
     for name, module in model.named_modules():
         hierarchy = name.split('.')
         if len(hierarchy) > 1:  # Ensure the module is not the top-level module
@@ -76,6 +130,16 @@ def apply_lora_to_model(model, config):
     
 # 추가로 로라 레이어만 활성화시키는 함수
 def mark_only_lora_as_trainable(model: nn.Module, bias: str = 'none') -> None:
+    """
+    Mark only LoRA parameters as trainable, freezing all other parameters.
+    
+    Args:
+        model: PyTorch model with LoRA layers
+        bias: Bias handling strategy - 'none', 'all', or 'lora_only'
+              - 'none': No bias parameters are trainable
+              - 'all': All bias parameters are trainable
+              - 'lora_only': Only LoRA layer biases are trainable
+    """
     for n, p in model.named_parameters():
         if 'lora_' not in n:
             p.requires_grad = False
