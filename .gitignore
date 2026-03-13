@@ -3,7 +3,8 @@ CLAUDE.md
 claude.md
 
 # Documentation files
-methods.pdf
+*.pdf
+*.tex
 
 # Python
 __pycache__/

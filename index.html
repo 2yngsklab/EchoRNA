@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EchoRNA — Topological Transcription for Protein-Binding RNA Sequence Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f8f9fb;
+      --text: #1c1c1c;
+      --accent: #2b4590;
+      --accent-light: #dce6f7;
+      --border: #d4d8e2;
+      --muted: #5a6278;
+      --max-w: 860px;
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Layout */
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section {
+      padding: 80px 24px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+
+    /* Divider */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+
+    /* Typography */
+    h1 { font-size: 2.6rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+    h2 { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 28px; color: var(--accent); }
+    h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 12px; }
+    p { margin-bottom: 16px; color: var(--text); }
+    p:last-child { margin-bottom: 0; }
+
+    /* Hero */
+    .hero {
+      padding: 96px 24px 80px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 { margin-bottom: 18px; }
+
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 640px;
+      margin: 0 auto 32px;
+      font-style: italic;
+    }
+
+    .authors {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .affil {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 36px;
+    }
+
+    .equal-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    /* Buttons */
+    .btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 24px;
+      border-radius: 4px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover { background: #213878; border-color: #213878; }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .btn-outline:hover { background: var(--accent-light); }
+
+    /* Abstract */
+    .abstract-text {
+      font-size: 0.97rem;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    /* Architecture grid */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .arch-bullets { list-style: none; }
+    .arch-bullets li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+    .arch-bullets li:last-child { border-bottom: none; }
+    .arch-bullets strong { color: var(--accent); }
+
+    /* Figures */
+    figure { margin: 0; }
+    figure img, figure video {
+      width: 100%;
+      max-width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: block;
+    }
+    figcaption {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    /* Results grid */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 36px;
+    }
+
+    @media (max-width: 640px) {
+      .results-grid { grid-template-columns: 1fr; }
+    }
+
+    .results-text {
+      font-size: 0.95rem;
+      line-height: 1.75;
+    }
+
+    /* Stat chips */
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .stat-chip {
+      background: var(--accent-light);
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 0.88rem;
+    }
+
+    .stat-chip .stat-value {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 1.1rem;
+      display: block;
+    }
+
+    .stat-chip .stat-label {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    /* Dataset table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.91rem;
+    }
+
+    thead tr {
+      background: var(--accent-light);
+    }
+
+    th {
+      text-align: left;
+      padding: 11px 14px;
+      font-weight: 600;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+
+    td {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    tr:nth-child(even) td { background: #f2f4f8; }
+
+    /* Supplementary / Algorithms */
+    .supp-header {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 24px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .algo-box {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+
+    .algo-header {
+      background: var(--accent-light);
+      padding: 10px 18px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .algo-body {
+      padding: 18px 20px;
+      font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+      font-size: 0.82rem;
+      line-height: 1.75;
+      background: #fafbfd;
+    }
+
+    .algo-body .kw    { color: #2b4590; font-weight: 600; }   /* keywords */
+    .algo-body .fn    { color: #1a6e3c; }                      /* function names */
+    .algo-body .cmt   { color: #8a8fa8; font-style: italic; } /* comments */
+    .algo-body .math  { font-style: italic; }                  /* math symbols */
+    .algo-body ol {
+      list-style: none;
+      counter-reset: algo-line;
+      margin: 0; padding: 0;
+    }
+    .algo-body ol li {
+      counter-increment: algo-line;
+      display: flex;
+      gap: 16px;
+    }
+    .algo-body ol li::before {
+      content: counter(algo-line);
+      color: #b0b4c4;
+      min-width: 20px;
+      text-align: right;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .algo-body .indent-1 { padding-left: 20px; }
+    .algo-body .indent-2 { padding-left: 40px; }
+    .algo-body .indent-3 { padding-left: 60px; }
+
+    .algo-caption {
+      font-size: 0.82rem;
+      color: var(--muted);
+      padding: 10px 18px 14px;
+      border-top: 1px solid var(--border);
+      background: #fafbfd;
+      line-height: 1.5;
+    }
+
+    /* Citation */
+    .citation-block {
+      background: #f0f2f6;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 24px 28px;
+      font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+      font-size: 0.83rem;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    .copy-hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 12px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.9rem; }
+      section { padding: 60px 20px; }
+      .hero { padding: 72px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HERO ──────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-tag">Discrete Diffusion &middot; RNA Design &middot; KAIST</div>
+  <h1>EchoRNA</h1>
+  <p class="hero-subtitle">Topological Transcription for Protein-Binding RNA Sequence Design via Discrete Diffusion</p>
+
+  <p class="authors">
+    Daniil Melnichenko<sup>*</sup>,&thinsp; Joohyun Cho<sup>*</sup>,&thinsp; Sungchul Yang,&thinsp; Jongmin Lim,&thinsp; Haeun Back,&thinsp; Dongsup Kim<sup>&dagger;</sup>,&thinsp; Young-suk Lee<sup>&dagger;</sup>
+  </p>
+  <p class="equal-note"><sup>*</sup> Equal contribution &nbsp;&nbsp; <sup>&dagger;</sup> Corresponding authors</p>
+  <p class="affil">KAIST &mdash; Department of Bio and Brain Engineering</p>
+
+  <div class="btn-group">
+    <!-- TODO: add arXiv/DOI link when published -->
+    <a class="btn btn-primary" href="#" aria-label="Paper (coming soon)" title="Paper coming soon">Paper</a>
+    <a class="btn btn-outline" href="https://github.com/2yngsklab/EchoRNA" target="_blank" rel="noopener">Code</a>
+    <a class="btn btn-outline" href="#supplementary">Algorithms</a>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ── ABSTRACT ─────────────────────────────────────────────── -->
+<section id="abstract">
+  <h2>Abstract</h2>
+  <p class="abstract-text">
+    Protein&ndash;RNA interactions govern nearly every aspect of post-transcriptional gene regulation, yet rational design of RNA sequences for specified protein partners remains an unsolved challenge. Current approaches require explicit modeling of RNA three-dimensional structure, a problem complicated by RNA's conformational flexibility, limited structural data, and the computational cost of accurate folding predictions. Here we introduce the concept of <strong>topological transcription</strong>: generating functional RNA sequences directly from protein surface topology, eliminating the need for RNA backbone specification. We implement this paradigm in EchoRNA, a discrete diffusion model that builds upon pretrained protein and RNA foundation models rather than learning interaction patterns from scratch. By leveraging evolutionary knowledge encoded in these foundation models, EchoRNA learns from just several thousand curated protein&ndash;RNA complexes to generate sequences that achieve high-confidence folding predictions, spontaneously recover canonical binding motifs, and exhibit thermodynamic stabilities matching native RNAs. Moreover, validation against independent SELEX and RBNS experimental datasets confirms capture of both established and previously uncharacterized high-affinity sequence features of EchoRNAs. Topological transcription establishes a new framework for programmable RNA design, with immediate applications in therapeutic development and synthetic biology.
+  </p>
+</section>
+
+<hr class="section-divider">
+
+<!-- ── ARCHITECTURE ──────────────────────────────────────────── -->
+<section id="architecture">
+  <h2>Architecture</h2>
+
+  <figure style="margin-bottom: 36px;">
+    <img src="images/architecture.png" alt="EchoRNA full architecture diagram showing the protein encoder, RNA language model, and cross-attention transformer">
+    <figcaption><strong>Fig. 1.</strong> EchoRNA architecture. The model processes protein structure through a GVP-GNN encoder and generates RNA sequences via a cross-attention transformer conditioned on protein features, using discrete absorbing diffusion with RNA-FM as the RNA language model backbone.</figcaption>
+  </figure>
+
+  <div class="arch-grid">
+    <ul class="arch-bullets">
+      <li>
+        <strong>Protein encoder</strong> &mdash; GVP-GNN with 6 layers processing residue-level graphs. Protein residues are featurized using ESM-2 (1,280-dim) and ESM-IF (512-dim) embeddings, providing rich evolutionary and structural context.
+      </li>
+      <li>
+        <strong>RNA language model</strong> &mdash; RNA-FM fine-tuned with Low-Rank Adaptation (LoRA, r=64, &alpha;=128) applied to attention projection and dense layers. LoRA preserves pretrained evolutionary knowledge while adapting to the protein-conditioned generation task.
+      </li>
+      <li>
+        <strong>Cross-attention transformer</strong> &mdash; 8-layer decoder where RNA features serve as queries and protein features provide keys and values. Timestep conditioning via TimeConditionedLayerNorm enables the model to track denoising progress across T=100 diffusion steps.
+      </li>
+    </ul>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ── DIFFUSION PROCESS ─────────────────────────────────────── -->
+<section id="diffusion">
+  <h2>Diffusion Process</h2>
+
+  <figure style="margin-bottom: 32px;">
+    <img src="images/diffusion.png" alt="Discrete absorbing diffusion process diagram showing forward noising and reverse denoising trajectories">
+    <figcaption><strong>Fig. 2.</strong> Absorbing discrete diffusion over RNA sequences. Forward process progressively masks tokens according to a cosine schedule; the reverse process learns to restore masked tokens conditioned on protein structure.</figcaption>
+  </figure>
+
+  <p>
+    EchoRNA employs <strong>absorbing discrete diffusion</strong>: during the forward process, RNA nucleotides are progressively replaced by a special MASK token according to a cosine noise schedule over T=100 timesteps. The model learns the reverse process&mdash;restoring masked tokens to their original nucleotide identity&mdash;conditioned on the target protein's three-dimensional structure. A reparameterized decoding objective directly predicts the clean sequence at each step, stabilizing training and enabling efficient one-shot generation.
+  </p>
+</section>
+
+<hr class="section-divider">
+
+<!-- ── RESULTS ───────────────────────────────────────────────── -->
+<section id="results">
+  <h2>Results</h2>
+
+  <div class="stats-row">
+    <div class="stat-chip">
+      <span class="stat-value">0.701</span>
+      <span class="stat-label">Demasking accuracy</span>
+    </div>
+    <div class="stat-chip">
+      <span class="stat-value">8 / 16</span>
+      <span class="stat-label">RBPs with ipTM &gt; random</span>
+    </div>
+    <div class="stat-chip">
+      <span class="stat-value">7 / 8</span>
+      <span class="stat-label">RBPs improved vs. baseline dataset</span>
+    </div>
+    <div class="stat-chip">
+      <span class="stat-value">&gt;163 M</span>
+      <span class="stat-label">Parameters</span>
+    </div>
+  </div>
+
+  <div class="results-grid">
+    <figure>
+      <img src="images/PUM2sampling.gif" alt="PUM2 RNA motif generation animation showing progressive sequence sampling">
+      <figcaption><strong>PUM2 motif recovery.</strong> EchoRNA generates sequences enriched in the UGUA motif characteristic of Pumilio-family protein binding, without explicit motif supervision.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="images/1IVS_train.gif" alt="Denoising trajectory animation for 1IVS protein during training">
+      <figcaption><strong>Denoising trajectory.</strong> Visualization of the reverse diffusion process for a representative RBP (1IVS), showing progressive token recovery across timesteps.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="images/PCBP_c_content.gif" alt="PCBP sequence content animation showing nucleotide composition evolution">
+      <figcaption><strong>PCBP sequence content.</strong> Nucleotide composition dynamics during generation for PCBP, illustrating how cytosine-rich motifs emerge under protein conditioning.</figcaption>
+    </figure>
+  </div>
+
+  <p class="results-text">
+    AlphaFold3 predictions of protein-RNA complexes showed that EchoRNA's ipTM scores were significantly greater than random RNA sequences for <strong>8 out of 16</strong> distinct test proteins, with performance comparable to or exceeding native sequences for MiaB, Val-tRNA synthetase, Dis3L2, SelB, HIV Rev, and tRNA-guanine transglycosylase. In generalization experiments, the DAZL recovery rate improved from 0.50 (zero-shot, no RRM examples) to <strong>0.83</strong> with 50 RRM-family training examples, with the model spontaneously recovering the canonical UUG-triplet binding motif. Validation against independent HTR-SELEX and RBNS datasets confirmed that EchoRNA captures both established and previously uncharacterized high-affinity sequence features.
+  </p>
+</section>
+
+<hr class="section-divider">
+
+<!-- ── DATASET ───────────────────────────────────────────────── -->
+<section id="dataset">
+  <h2>Dataset</h2>
+  <p style="margin-bottom: 28px; font-size: 0.95rem;">
+    EchoRNA introduces the <strong>Echo dataset</strong>, a curated collection of protein-RNA complexes from the BioLiP database, substantially expanding coverage over prior baselines. High-quality structures (resolution &le; 4.5 &Aring;) were filtered to exclude double-stranded RNA and RNA/DNA hybrids, then clustered at 40% protein sequence identity to construct a non-redundant benchmark.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Dataset</th>
+        <th>Source</th>
+        <th>Training</th>
+        <th>Validation</th>
+        <th>Test</th>
+        <th>RNA length</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Echo dataset</strong></td>
+        <td>BioLiP</td>
+        <td>2,672</td>
+        <td>264</td>
+        <td>22</td>
+        <td>8&ndash;254 nt</td>
+      </tr>
+      <tr>
+        <td>Baseline (RNAFlow)</td>
+        <td>PDBBind 2020</td>
+        <td>1,059</td>
+        <td>117</td>
+        <td>16</td>
+        <td>&mdash;</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top: 14px; font-size: 0.84rem; color: var(--muted);">
+    Test set proteins were selected to include six well-characterized RBPs with known binding motifs (PUM2, RBFOX1, NOVA2, MSI1, PCBP1, zc3h12a). Baseline dataset uses a 7 &Aring; distance threshold between protein C&alpha; and RNA C'4 atoms.
+  </p>
+</section>
+
+<hr class="section-divider">
+
+<!-- ── CITATION ──────────────────────────────────────────────── -->
+<section id="citation">
+  <h2>Citation</h2>
+  <pre class="citation-block">@article{melnichenko2025echorna,
+  title   = {Topological Transcription for Protein-Binding RNA Sequence Design via Discrete Diffusion},
+  author  = {Melnichenko, Daniil and Cho, Joohyun and Yang, Sungchul and Lim, Jongmin
+             and Back, Haeun and Kim, Dongsup and Lee, Young-suk},
+  journal = {bioRxiv},
+  year    = {2025}
+}</pre>
+  <p class="copy-hint">BibTeX entry will be updated upon publication.</p>
+</section>
+
+<hr class="section-divider">
+
+<!-- ── SUPPLEMENTARY: ALGORITHMS ────────────────────────────── -->
+<div class="supp-header">Supplementary &mdash; Algorithms</div>
+
+<section id="supplementary">
+  <h2>Algorithms</h2>
+
+  <!-- Algorithm 1: Forward Diffusion -->
+  <div class="algo-box">
+    <div class="algo-header">Algorithm 1 &mdash; Forward Diffusion Process</div>
+    <div class="algo-body">
+      <ol>
+        <li><span><span class="kw">Input:</span> clean RNA sequence <span class="math">r⁰</span>, timestep <span class="math">t ∈ {1,…,T}</span>, cosine schedule <span class="math">{α<sub>t</sub>}</span></span></li>
+        <li><span><span class="kw">Output:</span> corrupted sequence <span class="math">r<sup>t</sup></span></span></li>
+        <li><span>&nbsp;</span></li>
+        <li><span><span class="cmt">// Cosine noise schedule</span></span></li>
+        <li><span><span class="math">α<sub>t</sub></span> ← <span class="fn">½(1 − cos(πt / T))</span> &nbsp;&nbsp;<span class="cmt">// fraction of unmasked tokens remaining</span></span></li>
+        <li><span>&nbsp;</span></li>
+        <li><span><span class="kw">for each</span> position <span class="math">i</span> in <span class="math">r⁰</span> <span class="kw">do</span></span></li>
+        <li><span class="indent-1"><span class="kw">sample</span> <span class="math">u ~ Uniform(0, 1)</span></span></li>
+        <li><span class="indent-1"><span class="kw">if</span> <span class="math">u &lt; α<sub>t</sub></span> <span class="kw">then</span></span></li>
+        <li><span class="indent-2"><span class="math">r<sup>t</sup><sub>i</sub></span> ← <span class="math">r⁰<sub>i</sub></span> &nbsp;&nbsp;<span class="cmt">// keep original token</span></span></li>
+        <li><span class="indent-1"><span class="kw">else</span></span></li>
+        <li><span class="indent-2"><span class="math">r<sup>t</sup><sub>i</sub></span> ← [M] &nbsp;&nbsp;<span class="cmt">// absorb to MASK token</span></span></li>
+        <li><span class="indent-1"><span class="kw">end if</span></span></li>
+        <li><span><span class="kw">end for</span></span></li>
+        <li><span><span class="kw">return</span> <span class="math">r<sup>t</sup></span></span></li>
+      </ol>
+    </div>
+    <div class="algo-caption">
+      Closed-form: <span style="font-family:monospace">q(r<sup>t</sup> | r⁰) = Cat(r<sup>t</sup>; α<sub>t</sub>·r⁰ + (1−α<sub>t</sub>)·q<sub>noise</sub>)</span>, where
+      <span style="font-family:monospace">q<sub>noise</sub></span> places all probability mass on the MASK token [M].
+      <span style="font-family:monospace">α<sub>t</sub> = ∏<sub>s=1..t</sub> β<sub>s</sub></span>, with T = 100 diffusion steps.
+    </div>
+  </div>
+
+  <!-- Algorithm 2: Training Objective -->
+  <div class="algo-box">
+    <div class="algo-header">Algorithm 2 &mdash; Training Objective (Reparameterized Cross-Entropy)</div>
+    <div class="algo-body">
+      <ol>
+        <li><span><span class="kw">Input:</span> dataset of (protein graph <span class="math">𝒢</span>, RNA sequence <span class="math">r⁰</span>) pairs; model <span class="math">p<sub>θ</sub></span></span></li>
+        <li><span><span class="kw">Output:</span> updated parameters <span class="math">θ</span></span></li>
+        <li><span>&nbsp;</span></li>
+        <li><span><span class="kw">repeat</span></span></li>
+        <li><span class="indent-1"><span class="kw">sample</span> <span class="math">(𝒢, r⁰)</span> from dataset</span></li>
+        <li><span class="indent-1"><span class="kw">sample</span> timestep <span class="math">t ~ Uniform{1,…,T}</span></span></li>
+        <li><span class="indent-1">corrupt sequence: <span class="math">r<sup>t</sup></span> ← <span class="fn">ForwardDiffusion</span>(<span class="math">r⁰, t</span>) &nbsp;<span class="cmt">// Algorithm 1</span></span></li>
+        <li><span class="indent-1">compute mask indicator: <span class="math">b<sub>t</sub>(i)</span> = 𝟙[<span class="math">r<sup>t</sup><sub>i</sub></span> = [M]] &nbsp;<span class="cmt">// 1 if masked at position i</span></span></li>
+        <li><span class="indent-1">predict clean tokens: <span class="math">p<sub>θ</sub>(r⁰ | r<sup>t</sup>, 𝒢)</span></span></li>
+        <li><span class="indent-1">compute loss:</span></li>
+        <li><span class="indent-2">ℒ = −<span class="math">∑<sub>i</sub> b<sub>t</sub>(i) · log p<sub>θ</sub>(r⁰<sub>i</sub> | r<sup>t</sup>, 𝒢)</span> &nbsp;<span class="cmt">// only over masked positions</span></span></li>
+        <li><span class="indent-1">update <span class="math">θ</span> via AdamW (<span class="math">lr = 10⁻³, β₁=0.9, β₂=0.95, wd=10⁻³</span>)</span></li>
+        <li><span><span class="kw">until</span> convergence (max 50 epochs, early stop on validation loss)</span></li>
+      </ol>
+    </div>
+    <div class="algo-caption">
+      Constant time weighting λ<sup>t</sup> = 1 for all t. Gradient accumulation over n<sub>acc</sub> = 42 steps; mini-batch size B = 20.
+      Mixed-precision (AMP) training on a single NVIDIA A6000 (48 GB).
+    </div>
+  </div>
+
+  <!-- Algorithm 3: Generation -->
+  <div class="algo-box">
+    <div class="algo-header">Algorithm 3 &mdash; RNA Generation (Stochastic Top-k Denoising)</div>
+    <div class="algo-body">
+      <ol>
+        <li><span><span class="kw">Input:</span> protein graph <span class="math">𝒢</span>, desired length <span class="math">L</span>, steps <span class="math">T=100</span>, temperature <span class="math">τ</span></span></li>
+        <li><span><span class="kw">Output:</span> generated RNA sequence <span class="math">r̂</span></span></li>
+        <li><span>&nbsp;</span></li>
+        <li><span><span class="cmt">// Initialize fully masked sequence</span></span></li>
+        <li><span><span class="math">r<sup>T</sup></span> ← [M, M, …, M] &nbsp;<span class="cmt">// all L positions masked</span></span></li>
+        <li><span>&nbsp;</span></li>
+        <li><span><span class="kw">for</span> t = T <span class="kw">downto</span> 1 <span class="kw">do</span></span></li>
+        <li><span class="indent-1"><span class="cmt">// Predict clean sequence from current noisy state</span></span></li>
+        <li><span class="indent-1"><span class="math">r̂⁰</span> ← <span class="fn">argmax</span> <span class="math">p<sub>θ</sub>(r⁰ | r<sup>t</sup>, 𝒢)</span> &nbsp;&nbsp;<span class="cmt">// per-position prediction</span></span></li>
+        <li><span class="indent-1">confidence<sub>i</sub> ← <span class="math">p<sub>θ</sub>(r̂⁰<sub>i</sub> | r<sup>t</sup>, 𝒢)</span> &nbsp;&nbsp;<span class="cmt">// predicted probability of chosen token</span></span></li>
+        <li><span>&nbsp;</span></li>
+        <li><span class="indent-1"><span class="cmt">// Compute masking rate for next step</span></span></li>
+        <li><span class="indent-1"><span class="math">ρ<sub>t</sub></span> ← <span class="fn">cos</span>(<span class="math">((T−t) / T) · (π/2)</span>) &nbsp;&nbsp;<span class="cmt">// fraction of positions to re-mask</span></span></li>
+        <li><span class="indent-1">k ← <span class="fn">round</span>(<span class="math">ρ<sub>t</sub> · L</span>) &nbsp;&nbsp;<span class="cmt">// number of positions to mask</span></span></li>
+        <li><span>&nbsp;</span></li>
+        <li><span class="indent-1"><span class="cmt">// Optional: add Gumbel noise for diversity</span></span></li>
+        <li><span class="indent-1"><span class="kw">if</span> stochastic <span class="kw">then</span></span></li>
+        <li><span class="indent-2">score<sub>i</sub> ← confidence<sub>i</sub> + <span class="fn">Gumbel</span>(0, <span class="math">ρ<sub>t</sub></span>)</span></li>
+        <li><span class="indent-1"><span class="kw">else</span></span></li>
+        <li><span class="indent-2">score<sub>i</sub> ← confidence<sub>i</sub></span></li>
+        <li><span class="indent-1"><span class="kw">end if</span></span></li>
+        <li><span>&nbsp;</span></li>
+        <li><span class="indent-1"><span class="cmt">// Re-mask least confident positions</span></span></li>
+        <li><span class="indent-1"><span class="math">𝒮</span> ← indices of k smallest score<sub>i</sub></span></li>
+        <li><span class="indent-1"><span class="kw">for each</span> i <span class="kw">do</span></span></li>
+        <li><span class="indent-2"><span class="kw">if</span> i ∈ <span class="math">𝒮</span> <span class="kw">then</span> <span class="math">r<sup>t−1</sup><sub>i</sub></span> ← [M] &nbsp;<span class="kw">else</span> <span class="math">r<sup>t−1</sup><sub>i</sub></span> ← <span class="math">r̂⁰<sub>i</sub></span></span></li>
+        <li><span class="indent-1"><span class="kw">end for</span></span></li>
+        <li><span><span class="kw">end for</span></span></li>
+        <li><span>&nbsp;</span></li>
+        <li><span><span class="kw">return</span> <span class="math">r<sup>0</sup></span> &nbsp;&nbsp;<span class="cmt">// fully denoised sequence</span></span></li>
+      </ol>
+    </div>
+    <div class="algo-caption">
+      Stochastic top-k denoising with Gumbel noise temperature τ = ρ<sub>t</sub> encourages sequence diversity
+      while still concentrating probability mass on high-confidence predictions.
+      Special tokens (BOS, EOS, PAD) are excluded from masking and re-masking.
+    </div>
+  </div>
+
+</section>
+
+<hr class="section-divider">
+
+<!-- ── FOOTER ────────────────────────────────────────────────── -->
+<footer>
+  <p>
+    &copy; 2025 KAIST, Department of Bio and Brain Engineering &nbsp;&mdash;&nbsp;
+    <a href="https://github.com/2yngsklab/EchoRNA" target="_blank" rel="noopener">GitHub</a>
+  </p>
+</footer>
+
+<script>
+  // Restart animated GIFs each time they scroll into view,
+  // ensuring infinite looping regardless of the loop count in the file.
+  const gifObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        const src = img.src;
+        img.src = '';
+        img.src = src;
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('img[src$=".gif"]').forEach(img => {
+    gifObserver.observe(img);
+  });
+</script>
+</body>
+</html>
