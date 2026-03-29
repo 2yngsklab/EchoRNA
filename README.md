@@ -184,11 +184,12 @@ EchoRNA/
 If you use EchoRNA in your research, please cite:
 
 ```bibtex
-@article{echorna2024,
-  title={EchoRNA: Protein-Conditioned RNA Sequence Generation with Discrete Diffusion},
-  author={[Authors]},
-  journal={[Journal]},
-  year={2024}
+@article{melnichenko_cho2025echorna,
+  title   = {Topological Transcription for Protein-Binding RNA Sequence Design via Discrete Diffusion},
+  author  = {Melnichenko, Daniil and Cho, Joohyun and Yang, Sungchul and Lim, Jongmin
+             and Back, Haeun and Kim, Dongsup and Lee, Young-suk},
+  journal = {bioRxiv},
+  year    = {2025}
 }
 ```
 

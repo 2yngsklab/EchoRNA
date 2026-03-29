@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "echorna"
+version = "0.1.0"
+description = "Protein-conditioned RNA sequence generation via discrete diffusion"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Daniil Melnichenko"},
+    {name = "Joohyun Cho"},
+    {name = "Sungchul Yang"},
+    {name = "Jongmin Lim"},
+    {name = "Haeun Back"},
+    {name = "Dongsup Kim"},
+    {name = "Young-suk Lee"},
+]
+keywords = ["RNA", "protein", "diffusion", "deep-learning", "bioinformatics"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "torch>=2.4.0",
+    "torch-geometric>=2.5.3",
+    "transformers>=4.46.3",
+    "fair-esm>=2.0.0",
+    "rna-fm>=0.2.2",
+    "biopython>=1.78",
+    "numpy>=1.26.4",
+    "pandas>=2.2.2",
+    "scipy>=1.14.1",
+    "scikit-learn>=1.5.1",
+    "matplotlib>=3.8.4",
+    "seaborn>=0.13.2",
+    "einops>=0.8.0",
+    "peft>=0.13.2",
+    "loralib>=0.1.2",
+    "accelerate>=1.1.1",
+    "pyyaml>=6.0.1",
+    "tqdm>=4.66.4",
+    "rich>=14.0.0",
+    "ml-collections>=0.1.1",
+    "rotary-embedding-torch>=0.6.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "jupyter",
+    "ipython",
+    "tensorboard",
+]
+structure = [
+    "viennarna>=2.7.0",
+]
+
+[project.urls]
+Repository = "https://github.com/2yngsklab/EchoRNA"
+
+[tool.setuptools.packages.find]
+include = ["source*"]
