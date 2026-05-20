@@ -33,28 +33,34 @@ For inquiries regarding the model, generated results, or technical support, plea
 ### Content List
 - [Requirements](#requirements)
   - [Software](#software)
-  - [Computing system](#ㅊomputing-system)
+  - [Computing system](#computing-system)
 - [Installation](#installation)
-  - [Conda](#conda)
-  - [Docker](#docker)
+  - [Environment setup](#environment-setup)
 - [Usage](#usage)
-  - [Required Arguments](#required-arguments)
-  - [Optional Arguments](#optional-arguments)
-  - [Sample List File Format](#sample-list-file-format)
-- [Examples](#examples-taken-from-run_examplessh)
-- [Output Directory Structure](#output-directory-structure)
-  - [File Naming Conventions](#file-naming-conventions)
-- [Other Details](#other-details)
-  - [Threading and Memory](#threading-and-memory)
-  - [Using BWA instead of BWA-MEM2](#using-bwa-instead-of-bwa-mem2)
-  - [Softlinking (-sl)](#softlinking--sl)
-  - [Resumability](#resumability)
-- [Links to Example Datasets](#links-to-dataset-examples)
+  - [Protein feature engineering](#protein-feature-engineering)
+  - [RNA sampling](#rna-sampling)
+- [Tutorial](#tutorial)
+- [Citation](#citation)
+- [License](#license)
 
 ## Requirements
-EchoRNA is build with these packages
+EchoRNA is build with these packages - gpu
 ### Software
-- os, torch, cuda, cudnn, torch-geometric, esm2, esmif, rnafm, etc
+- os ,gcc, glibc
+- python
+- - torch,   - torch-geometric
+- cuda, cudnn, nvidia-driver, cuda-toolkiit
+- transformer
+  - rna-fm
+  - faor-esm
+
+- - PyTorch 2.4.0+cu118 with CUDA 11.8
+- torch-geometric 2.5.3
+- transformers 4.46.3
+- fair-esm 2.0.0
+- RNA-FM
+- BioPython, pandas, numpy, matplotlib
+- Rich (for terminal formatting)
 ### Computing system
 - CPU
 - GPU
@@ -76,19 +82,6 @@ conda activate rnpdiffuse
 # Or create lemon environment as specified in user instructions
 conda activate lemon
 ```
-
-### Key Dependencies
-
-- PyTorch 2.4.0+cu118 with CUDA 11.8
-- torch-geometric 2.5.3
-- transformers 4.46.3
-- fair-esm 2.0.0
-- RNA-FM
-- BioPython, pandas, numpy, matplotlib
-- Rich (for terminal formatting)
-
-
-
 
 
 ## Usage
