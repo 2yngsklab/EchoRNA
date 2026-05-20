@@ -45,7 +45,6 @@ For inquiries regarding the model, generated results, or technical support, plea
 
 ## Dependencies and Requirements
 EchoRNA was developed and tested on an NVIDIA L40 GPU with the following OS and Python package dependencies
-
 ### Software dependencies
 - CentOS Linux 7 with GCC 4.8.5 and Glibc 2.17
 - Python 3.10.18
@@ -102,12 +101,12 @@ with AF3 structure prediction
 If you use EchoRNA in your research, please cite:
 
 ```bibtex
-@article{melnichenko_cho2025echorna,
-  title   = {Topological Transcription for Protein-Binding RNA Sequence Design via Discrete Diffusion},
-  author  = {Melnichenko, Daniil and Cho, Joohyun and Yang, Sungchul and Lim, Jongmin
+@article{younglab2026echorna,
+  title   = {TBD},
+  author  = {Melnichenko, Daniil and Cho, Joohyun and Lim, Jongmin and Yang, Sungchul
              and Back, Haeun and Kim, Dongsup and Lee, Young-suk},
-  journal = {bioRxiv},
-  year    = {2025}
+  journal = {TBD},
+  year    = {TBD}
 }
 ```
 
