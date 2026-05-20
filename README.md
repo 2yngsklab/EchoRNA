@@ -31,9 +31,9 @@ For inquiries regarding the model, generated results, or technical support, plea
 *Korea Advanced Institute of Science and Technology (KAIST)*
 
 ### Content List
-- [Requirements](#requirements)
-  - [Software](#software)
-  - [Computing system](#computing-system)
+- [Dependencies and Requirements](#dependencies-and-requirements)
+  - [Software](#software-dependencies)
+  - [Computing system](#computing-system-requirements)
 - [Installation](#installation)
   - [Environment setup](#environment-setup)
 - [Usage](#usage)
@@ -43,29 +43,23 @@ For inquiries regarding the model, generated results, or technical support, plea
 - [Citation](#citation)
 - [License](#license)
 
-## Requirements
-EchoRNA is build with these packages - gpu
-### Software
-- os ,gcc, glibc
-- python
-- - torch,   - torch-geometric
-- cuda, cudnn, nvidia-driver, cuda-toolkiit
-- transformer
-  - rna-fm
-  - faor-esm
+## Dependencies and Requirements
+EchoRNA was developed and tested on an NVIDIA L40 GPU with the following OS and Python package dependencies
 
-- - PyTorch 2.4.0+cu118 with CUDA 11.8
-- torch-geometric 2.5.3
-- transformers 4.46.3
-- fair-esm 2.0.0
-- RNA-FM
-- BioPython, pandas, numpy, matplotlib
-- Rich (for terminal formatting)
-### Computing system
-- CPU
-- GPU
+### Software dependencies
+- CentOS Linux 7 with GCC 4.8.5 and Glibc 2.17
+- Python 3.10.18
+- torch 2.4.0+cu118 with CUDA 11.8 and CUDNN 9.1.0
+- torch-geometric 2.7.0
+- rna-fm 0.2.2
+- faIr-esm
+- transformers 4.46.3 ? 
 
-
+### Computing system requirements
+- CPU  
+TBD
+- GPU  
+TBD
 
 
 ## Installation
