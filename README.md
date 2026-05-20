@@ -1,5 +1,8 @@
 # EchoRNA: Protein-Conditioned RNA Sequence Generation
 
+
+
+
 EchoRNA is a discrete diffusion-based model that generates functional RNA sequences conditioned on three-dimensional protein structures. The model uses absorbing discrete diffusion to sample RNA sequences that exhibit specific binding preferences for RNA-binding proteins (RBPs).
 
 <div align="center">
