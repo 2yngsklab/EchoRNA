@@ -1,6 +1,30 @@
 # EchoRNA: Protein-Conditioned RNA Sequence Generation
 
+### Overview
+### Key Features
+### Architecture
+### Contact
+### Content List
 
+## Requirements
+EchoRNA is build with these packages
+### Software
+- os, torch, cuda, cudnn, torch-geometric, esm2, esmif, rnafm, etc
+### Computing system
+- CPU
+- GPU
+
+## Installation
+### Environment setup
+- esm2 smth
+
+## Usage
+### Protein feature engineering
+### RNA sampling
+
+
+## Examples
+TBD
 
 
 EchoRNA is a discrete diffusion-based model that generates functional RNA sequences conditioned on three-dimensional protein structures. The model uses absorbing discrete diffusion to sample RNA sequences that exhibit specific binding preferences for RNA-binding proteins (RBPs).
