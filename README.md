@@ -44,15 +44,17 @@ For inquiries regarding the model, generated results, or technical support, plea
 - [License](#license)
 
 ## Dependencies and Requirements
+
 EchoRNA was developed and tested on an NVIDIA L40 GPU with the following OS and Python package dependencies
+
 ### Software dependencies
 - CentOS Linux 7 with GCC 4.8.5 and Glibc 2.17
 - Python 3.10.18
 - torch 2.4.0+cu118 with CUDA 11.8 and CUDNN 9.1.0
 - torch-geometric 2.7.0
+- trnasformer 4.46.3
 - rna-fm 0.2.2
-- faIr-esm
-- transformers 4.46.3 ? 
+- faIr-esm 2.0.0 with biotite 1.2.0
 
 ### Computing system requirements
 - CPU  
@@ -62,22 +64,32 @@ TBD
 
 
 ## Installation
+
 ### Environment setup
-- esm2 smth
-
-The project requires a conda environment with CUDA support. Use the provided environment file:
-
+Run `./install.sh` to prepare the conda environment for EchoRNA.  
+You may customize the installation directory and conda environment name with '--install-dir' and '--env-name'.  
 ```bash
-# Create environment from the provided YAML
-conda env create -f echorna.yaml
-conda activate rnpdiffuse
-
-# Or create lemon environment as specified in user instructions
-conda activate lemon
+```
+After installation, please activate the conda environment before running the pipeline.  
+```bash
+conda activate echorna  # Default conda environment name
+conda activate <ENV_NAME> # Custom conda environment name
+```
+Run following commands if you want to use GPU for RNA sampling. (Optional)
+```python
 ```
 
 
+
 ## Usage
+```
+```
+### Required Arguments
+
+### Optional Arguments
+
+
+
 ### Protein feature engineering
 ### RNA sampling
 - **Variable length support**: Handles RNA sequences from 8-254 nucleotides
@@ -92,8 +104,12 @@ python sampling.py --config="sampling_config/RF2NA.yaml"
 ```
 
 ## Tutorial
+
 TBD
 with AF3 structure prediction
+
+
+## Output Directory Structure
 
 
 ## Citation
@@ -101,7 +117,7 @@ with AF3 structure prediction
 If you use EchoRNA in your research, please cite:
 
 ```bibtex
-@article{younglab2026echorna,
+@article{2yngsklab2026echorna,
   title   = {TBD},
   author  = {Melnichenko, Daniil and Cho, Joohyun and Lim, Jongmin and Yang, Sungchul
              and Back, Haeun and Kim, Dongsup and Lee, Young-suk},
