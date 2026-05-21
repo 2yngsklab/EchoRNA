@@ -92,8 +92,8 @@ python -c "import torch; print(torch.cuda.is_available())"
 
 
 ## Usage
-
 ```
+cd EchoRNA # move to the working directory
 python EchoRNA.py 
 ```
 ### Required Arguments
@@ -106,10 +106,12 @@ python EchoRNA.py
 
 - `-n`, `--name` : The namd of output file. If not provided, root namd of CIF file will be used.
 - `-l`, `--rna-length` : The length of RNA to be generated (default: `20`).
-- `-s`, `--sampling-strategy` : Sampling strategy. You can select between `vanilla` and `gumbell` (default: `vanilla`).
+- `-ns`, `--num-sequence` : The number of RNAs to be generated (default: `20`).
+- `-s`, `--sampling-strategy` : Sampling strategy. You can select between `vanilla` and `gumbel_argmax` (default: `vanilla`).
 - `-sd`, `--random-seed` : Random seed (default: `42`).
 - `-g`, `--GPU` : Use GPU if available. If not provided, CPU will be used.
-
+- `--config` : Path to model configuration file. (default: "./echorna_config.yaml").
+- `--weight` : Path to the model weight. (default: "./echorna_weight.pth").
 
 ## Tutorial
 
