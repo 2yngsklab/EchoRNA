@@ -90,12 +90,16 @@ conda activate <ENV_NAME>  # If you specified a custom name
 python -c "import torch; print(torch.cuda.is_available())"
 ```
 
+### Downloading model weight
+TBD
 
 ## Usage
+
 ```
-cd EchoRNA # move to the working directory
-python EchoRNA.py 
+mv echorna_weight.pth ./EchoRNA  # move model weight to the working directory
+python ./EchoRNA/EchoRNA_sampling.py --protein <PROTEIN> --chain <CHAIN> --output-dir <OUTPUT_DIR> [--name <OUTPUT_FILE_NAME>] [--rna-length <LENGTH>] [--num-sequence <NUMBER>] [--sampling-strategy <SAMPLING_STRATEGY>] [--random-seed <RANDOM_SEED>] [--config <CONFIG_PATH>] [''weight <WEIGHT_PATH>] [--GPU]
 ```
+
 ### Required Arguments
 
 - `-p`, `--protein` : Path to the protein structure. It should be CIF format.  
@@ -109,9 +113,9 @@ python EchoRNA.py
 - `-ns`, `--num-sequence` : The number of RNAs to be generated (default: `20`).
 - `-s`, `--sampling-strategy` : Sampling strategy. You can select between `vanilla` and `gumbel_argmax` (default: `vanilla`).
 - `-sd`, `--random-seed` : Random seed (default: `42`).
-- `-g`, `--GPU` : Use GPU if available. If not provided, CPU will be used.
 - `--config` : Path to model configuration file. (default: "./echorna_config.yaml").
 - `--weight` : Path to the model weight. (default: "./echorna_weight.pth").
+- `-g`, `--GPU` : Use GPU if available. If not provided, CPU will be used.
 
 ## Tutorial
 
@@ -121,7 +125,11 @@ TBD
 
 ## Output Directory Structure
 
-TBD
+output_dir/
+|-- complex/      # Database VCF files and pseudoDB output
+|-- esm2/         # esm2 embedding files
+|-- esmIF/        # esmIF embedding files
+|-- RNA/          # EchoRNA-generated RNAs
 
 
 ## Citation
