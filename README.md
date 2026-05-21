@@ -68,16 +68,28 @@ TBD
 ### Environment setup
 Run `./install.sh` to prepare the conda environment for EchoRNA.  
 You may customize the installation directory and conda environment name with '--install-dir' and '--env-name'.  
+
 ```bash
+# - create a conda enviroment named 'echorna'
+./install.sh
+
+# create a conda environment with custom name
+./install.sh --install-dir=<INSTALL_DIR> --env-name=<ENV_NAME>
 ```
+
 After installation, please activate the conda environment before running the pipeline.  
+
 ```bash
 conda activate echorna  # Default conda environment name
 conda activate <ENV_NAME> # Custom conda environment name
 ```
-Run following commands if you want to use GPU for RNA sampling. (Optional)
+
+Run following commands if you want to check GPU to use for RNA sampling. (Optional)
 ```python
+python -c "import torch; print(torch.cuda.is_available())"
 ```
+
+
 
 
 
@@ -87,29 +99,19 @@ Run following commands if you want to use GPU for RNA sampling. (Optional)
 ### Required Arguments
 
 ### Optional Arguments
-
-
-
-### Protein feature engineering
-### RNA sampling
 - **Variable length support**: Handles RNA sequences from 8-254 nucleotides
-Generate RNA sequences conditioned on protein structures:
+Generate RNA sequences conditioned on protein structures:## Optional Arguments
 
-```bash
-# Sample using EchoRNA model
-python sampling.py --config="sampling_config/EchoRNA.yaml"
-
-# Sample using RF2NA baseline
-python sampling.py --config="sampling_config/RF2NA.yaml"
-```
 
 ## Tutorial
 
 TBD
-with AF3 structure prediction
+
 
 
 ## Output Directory Structure
+
+TBD
 
 
 ## Citation
