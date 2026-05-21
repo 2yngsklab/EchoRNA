@@ -36,10 +36,12 @@ For inquiries regarding the model, generated results, or technical support, plea
   - [Computing system](#computing-system-requirements)
 - [Installation](#installation)
   - [Environment setup](#environment-setup)
+  - [Downloading Model Weight](#downloading_model_weight)
 - [Usage](#usage)
-  - [Protein feature engineering](#protein-feature-engineering)
-  - [RNA sampling](#rna-sampling)
+  - [Required Arguments](#required_arguments)
+  - [Optional Arguments](#optional_arguments)
 - [Tutorial](#tutorial)
+- [Output Directory Structure](output_directory_structure)
 - [Citation](#citation)
 - [License](#license)
 
@@ -90,7 +92,7 @@ conda activate <ENV_NAME>  # If you specified a custom name
 python -c "import torch; print(torch.cuda.is_available())"
 ```
 
-### Downloading model weight
+### Downloading Model Weight
 TBD
 
 ## Usage
@@ -122,15 +124,14 @@ python ./EchoRNA/EchoRNA_sampling.py --protein <PROTEIN> --chain <CHAIN> --outpu
 TBD
 
 
-
 ## Output Directory Structure
-
+```
 output_dir/
-|-- complex/      # Database VCF files and pseudoDB output
-|-- esm2/         # esm2 embedding files
-|-- esmIF/        # esmIF embedding files
+|-- complex/      # Proteinn structure files 
+|-- esm2/         # Esm2 embedding files
+|-- esmIF/        # EsmIF embedding files
 |-- RNA/          # EchoRNA-generated RNAs
-
+```
 
 ## Citation
 
