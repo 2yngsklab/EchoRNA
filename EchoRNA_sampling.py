@@ -466,14 +466,16 @@ def main(protein_path, chain_id, output_dir, name,
     complex_dir = output_dir / "complex"
     esm2_dir    = output_dir / "esm2"
     if_dir      = output_dir / "esmIF"
-    for d in (complex_dir, esm2_dir, if_dir):
+    rna_dir     = output_dir / "RNA"
+
+    for d in (complex_dir, esm2_dir, if_dir, rna_dir):
         d.mkdir(parents=True, exist_ok=True)
  
     sample_name      = name if name is not None else protein_path.stem
     protein_pkl_path = complex_dir / f"{sample_name}.pickle"
     esm2_pt_path     = esm2_dir    / f"{sample_name}.pt"
     if_pt_path       = if_dir      / f"{sample_name}.pt"
-    fasta_path       = output_dir  / f"{sample_name}.fasta"
+    fasta_path       = rna_dir  / f"{sample_name}.fasta"
  
     #  Parse protein and generate embeddings 
     print(f"Parsing protein {protein_path.name}, chain {chain_id}")
