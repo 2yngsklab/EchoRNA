@@ -66,41 +66,49 @@ TBD
 ## Installation
 
 ### Environment setup
-Run `./install.sh` to prepare the conda environment for EchoRNA.  
-You may customize the installation directory and conda environment name with '--install-dir' and '--env-name'.  
+Run ./install.sh to set up the Conda environment for EchoRNA.  
+You can customize the installation directory and environment name using the --install-dir and --env-name flags.  
 
 ```bash
-# - create a conda enviroment named 'echorna'
+# Create the default Conda environment ('echorna')
 ./install.sh
 
-# create a conda environment with custom name
+# Create a Conda environment with a custom name and directory
 ./install.sh --install-dir=<INSTALL_DIR> --env-name=<ENV_NAME>
 ```
 
-After installation, please activate the conda environment before running the pipeline.  
+Once installed, activate the environment before running the pipeline  
 
 ```bash
-conda activate echorna  # Default conda environment name
-conda activate <ENV_NAME> # Custom conda environment name
+conda activate echorna     # If you used the default name
+conda activate <ENV_NAME>  # If you specified a custom name
 ```
 
-Run following commands if you want to check GPU to use for RNA sampling. (Optional)
+(Optional) To verify that your GPU is available for RNA sampling, run the following command  
+
 ```python
 python -c "import torch; print(torch.cuda.is_available())"
 ```
 
 
-
-
-
 ## Usage
+
 ```
+python EchoRNA.py 
 ```
 ### Required Arguments
 
+- `-p`, `--protein` : Path to the protein structure. It should be CIF format.  
+- `-c`, `--chain` : The ID of protein chain where generated RNA binds.
+- `-d`, `--output-dir` : The output directory where generated sequences are saved
+
 ### Optional Arguments
-- **Variable length support**: Handles RNA sequences from 8-254 nucleotides
-Generate RNA sequences conditioned on protein structures:## Optional Arguments
+
+- `-n`, `--name` : The namd of output file. If not provided, root namd of CIF file will be used.
+- `-l`, `--rna-length` : The length of RNA to be generated (default: `20`).
+- `-s`, `--sampling-strategy` : Sampling strategy. You can select between `vanilla` and `gumbell` (default: `vanilla`).
+- `-sd`, `--random-seed` : Random seed (default: `42`).
+- `-g`, `--GPU` : Use GPU if available. If not provided, CPU will be used.
 
 
 ## Tutorial
@@ -119,7 +127,7 @@ TBD
 If you use EchoRNA in your research, please cite:
 
 ```bibtex
-@article{2yngsklab2026echorna,
+@article{2yngsklab2026echorna},
   title   = {TBD},
   author  = {Melnichenko, Daniil and Cho, Joohyun and Lim, Jongmin and Yang, Sungchul
              and Back, Haeun and Kim, Dongsup and Lee, Young-suk},
