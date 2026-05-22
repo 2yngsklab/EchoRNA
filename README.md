@@ -66,6 +66,7 @@ TBD
 
 
 ## Installation
+### how to do git clone?
 
 ### Environment setup
 Run ./install.sh to set up the Conda environment for EchoRNA.  
@@ -94,11 +95,11 @@ python -c "import torch; print(torch.cuda.is_available())"
 
 ### Downloading Model Weight
 TBD
+mv <MODEL_WEIGHT> ./EchoRNA/echorna_weight.pth  # move model weight to the working directory
 
 ## Usage
 
 ```
-mv echorna_weight.pth ./EchoRNA  # move model weight to the working directory
 python ./EchoRNA/EchoRNA_sampling.py --protein <PROTEIN> --chain <CHAIN> --output-dir <OUTPUT_DIR> [--name <OUTPUT_FILE_NAME>] [--rna-length <LENGTH>] [--num-sequence <NUMBER>] [--sampling-strategy <SAMPLING_STRATEGY>] [--random-seed <RANDOM_SEED>] [--config <CONFIG_PATH>] [''weight <WEIGHT_PATH>] [--GPU]
 ```
 
