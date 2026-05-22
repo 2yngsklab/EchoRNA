@@ -37,13 +37,14 @@ For inquiries regarding the model, generated results, or technical support, plea
   - [Software](#software-dependencies)
   - [Computing system](#computing-system-requirements)
 - [Installation](#installation)
+  - [Cloning the Repository](#cloning-the-repository)
   - [Environment setup](#environment-setup)
-  - [Downloading Model Weight](#downloading_model_weight)
+  - [Downloading Model Weight](#downloading-model-weight)
 - [Usage](#usage)
-  - [Required Arguments](#required_arguments)
-  - [Optional Arguments](#optional_arguments)
+  - [Required Arguments](#required-arguments)
+  - [Optional Arguments](#optional-arguments)
 - [Tutorial](#tutorial)
-- [Output Directory Structure](output_directory_structure)
+  - [Output directory](output-directory)
 - [Citation](#citation)
 - [License](#license)
 
@@ -132,22 +133,34 @@ python EchoRNA_sampling.py --protein <PROTEIN> --chain <CHAIN> --output-dir <OUT
 - `--weight` : Path to the model weight. (default: "./echorna_weight.pth").
 
 ## Tutorial
+To generate EchoRNAs for PUM2 (PDB ID: 3Q0Q), run one of the following commands:
 
-TBD
+```bash
+# Run on CPU
+python EchoRNA_sampling.py -p ./tutorial/3Q0Q.cif -c A -d <OUTPUT_DIR>
 
+# Run on GPU
+python EchoRNA_sampling.py -p ./tutorial/3Q0Q.cif -c A -d <OUTPUT_DIR> -g
 
-## Output Directory Structure
+# Run on the second GPU
+python EchoRNA_sampling.py -p ./tutorial/3Q0Q.cif -c A -d <OUTPUT_DIR> -g cuda:1
+
+# Generate EchoRNAs of length 8 on GPU
+python EchoRNA_sampling.py -p ./tutorial/3Q0Q.cif -c A -l 8 -d <OUTPUT_DIR> -g
+```
+
+### Output directory
+After running the tutorial, the output directory will contain the following subdirectories
+
 ```
 output_dir/
-|-- complex/      # Protein structure files 
-|-- esm2/         # Esm2 embedding files
-|-- esmIF/        # EsmIF embedding files
-|-- RNA/          # EchoRNA-generated RNAs
+|-- RNA/          # EchoRNA-generated RNAs in `.fasta.` format
+|-- complex/      # Protein structure files in `.pickle` format
+|-- esm2/         # Esm2 embedding files in `.pt` format
+|-- esmIF/        # EsmIF embedding files in `.pt` format
 ```
 
-## Other details
-explain what each arguments mean
-
+The generated RNA sequences are saved in the `RNA/` directory. The other directories contain processed structure and embedding files used during EchoRNA generation.
 
 ## Citation
 
