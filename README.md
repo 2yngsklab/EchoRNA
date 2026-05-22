@@ -48,8 +48,7 @@ For inquiries regarding the model, generated results, or technical support, plea
 - [License](#license)
 
 ## Dependencies and Requirements
-
-EchoRNA was developed and trained on an NVIDIA L40 GPU with the following OS and Python package dependencies
+EchoRNA requires [Conda](https://www.anaconda.com/docs/getting-started/miniconda/install/overview) for dependency management (```EchoRNA_env.yaml```). The model was and trained on an NVIDIA L40 GPU with the following dependencies
 
 ### Software dependencies
 - CentOS Linux 7 with GCC 4.8.5 and Glibc 2.17
@@ -69,19 +68,17 @@ TBD
 
 ## Installation
 ### Cloning the Repository
-'''bash
-cd /path/to/your/desired/folder
-git clone https://github.com/username/repository.git](https://github.com/2yngsklab/EchoRNA.git
-'''
+Download the source code to your machine and navigate into the project directory
 
+```bash
+git clone https://github.com/2yngsklab/EchoRNA.git
+cd ./EchoRNA # the project directory
+```
 
+### Environment setup ### add EchoRNA_env.yaml
 
-### Environment setup
- link to conda
- general way to create the environemnt by yaml
-
-Run ./install.sh to set up the Conda environment for EchoRNA.  
-You can customize the installation directory and environment name using the --install-dir and --env-name flags.  
+Run ```./install.sh``` to set up the Conda environment for EchoRNA.  
+You can customize the installation directory and environment name using the ```--install-dir``` and ```--env-name``` flags.  
 
 ```bash
 # Create the default Conda environment ('echorna')
@@ -102,9 +99,8 @@ conda activate <ENV_NAME>  # If you specified a custom name
 
 ```python
 python -c "import torch; print(torch.cuda.is_available())"
+>>> True (if GPU is available)
 ```
-
-expected output
 
 ### Downloading Model Weight
 TBD  
@@ -115,25 +111,24 @@ mv <MODEL_WEIGHT> ./EchoRNA/echorna_weight.pth  # move model weight to the worki
 ## Usage
 
 ```
-cd ./EchoRNA
-python EchoRNA_sampling.py --protein <PROTEIN> --chain <CHAIN> --output-dir <OUTPUT_DIR> [--name <OUTPUT_FILE_NAME>] [--rna-length <LENGTH>] [--num-sequence <NUMBER>] [--sampling-strategy <SAMPLING_STRATEGY>] [--random-seed <RANDOM_SEED>] [--config <CONFIG_PATH>] [''weight <WEIGHT_PATH>] [--GPU]
+python EchoRNA_sampling.py --protein <PROTEIN> --chain <CHAIN> --output-dir <OUTPUT_DIR> [--name <OUTPUT_FILE_NAME>] [--rna-length <LENGTH>] [--num-sequence <NUMBER>] [--sampling-strategy <SAMPLING_STRATEGY>] [--random-seed <RANDOM_SEED>] [--config <CONFIG_PATH>] [--weight <WEIGHT_PATH>] [--GPU]
 ```
 
 ### Required Arguments
 
-- `-p`, `--protein` : Path to the protein structure. It should be CIF format.  
-- `-c`, `--chain` : The ID of protein chain where generated RNA binds.
-- `-d`, `--output-dir` : The output directory where generated sequences are saved
+- `-p`, `--protein` : Path to the input protein structure (should be in CIF format).  
+- `-c`, `--chain` : The ID of protein chain where the generated RNA will bind.
+- `-d`, `--output-dir` : The output directory where tthe generated sequences are saved
 
 ### Optional Arguments
 
-- `-n`, `--name` : The namd of output file. If not provided, root namd of CIF file will be used.
-- `-l`, `--rna-length` : The length of RNA to be generated (default: `20`).
-- `-ns`, `--num-sequence` : The number of RNAs to be generated (default: `20`).
-- `-s`, `--sampling-strategy` : Sampling strategy. You can select between `vanilla` and `gumbel_argmax` (default: `vanilla`).
-- `-sd`, `--random-seed` : Random seed (default: `42`).
-- `-g`, `--GPU` : Use GPU if available. If not provided, CPU will be used.
-- `--config` : Path to model configuration file. (default: "./echorna_config.yaml").
+- `-n`, `--name` : The namd of output file. If not provided, the base name of CIF file will be used.
+- `-l`, `--rna-length` : The length of the RNA sequences to generate (default: `20`).
+- `-ns`, `--num-sequence` : The number of RNA sequences to generate (default: `100`).
+- `-s`, `--sampling-strategy` : Sampling strategy. You can choose between `vanilla` and `gumbel_argmax` (default: `vanilla`).
+- `-sd`, `--random-seed` : Random seed for reproducibility (default: `42`).
+- `-g`, `--GPU` : Enable GPU usaage. If not provided, CPU will be used.
+- `--config` : Path to the model configuration file. (default: "./echorna_config.yaml").
 - `--weight` : Path to the model weight. (default: "./echorna_weight.pth").
 
 ## Tutorial
@@ -144,7 +139,7 @@ TBD
 ## Output Directory Structure
 ```
 output_dir/
-|-- complex/      # Proteinn structure files 
+|-- complex/      # Protein structure files 
 |-- esm2/         # Esm2 embedding files
 |-- esmIF/        # EsmIF embedding files
 |-- RNA/          # EchoRNA-generated RNAs
@@ -171,4 +166,4 @@ If you use EchoRNA in your research, please cite:
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
