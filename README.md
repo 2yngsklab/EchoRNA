@@ -75,7 +75,7 @@ git clone https://github.com/2yngsklab/EchoRNA.git
 cd ./EchoRNA # the project directory
 ```
 
-### Environment setup ### add EchoRNA_env.yaml
+### Environment setup
 
 Run ```./install.sh``` to set up the Conda environment for EchoRNA.  
 You can customize the installation directory and environment name using the ```--install-dir``` and ```--env-name``` flags.  
@@ -127,7 +127,7 @@ python EchoRNA_sampling.py --protein <PROTEIN> --chain <CHAIN> --output-dir <OUT
 - `-ns`, `--num-sequence` : The number of RNA sequences to generate (default: `100`).
 - `-s`, `--sampling-strategy` : Sampling strategy. You can choose between `vanilla` and `gumbel_argmax` (default: `vanilla`).
 - `-sd`, `--random-seed` : Random seed for reproducibility (default: `42`).
-- `-g`, `--GPU` : Enable GPU usaage. If not provided, CPU will be used.
+- `-g`, `--GPU` : Enable GPU usage. You can specify a device using `cuda:number` (default:`'cuda:0"`). If not provided, CPU will be used.
 - `--config` : Path to the model configuration file. (default: "./echorna_config.yaml").
 - `--weight` : Path to the model weight. (default: "./echorna_weight.pth").
 
