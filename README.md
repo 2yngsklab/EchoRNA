@@ -1,20 +1,22 @@
 # EchoRNA: Designing nucleotide sequences directly from protein topology
 
 ### Overview
-EchoRNA is a discrete diffusion model that generates functional RNA sequences conditioned on a 3D structure of RNA-binding protein (RBP). This repository provides a comprehensive, easy-to-use workflow for deploying EchoRNA and sampling novel, functional RNAs. By enabling researchers to seamlessly generate RNAs that can bind to their RBPs of interest, this project aims to accelerate scientific discovery and therapeutic applications of RNA biology. 
+EchoRNA is a discrete diffusion model that generates functional RNA sequences conditioned on the 3D structure of an RNA-binding protein (RBP). This repository provides a comprehensive, easy-to-use workflow for sampling novel, functional RNAs via EchoRNA. By streamlining this generating process, the project aims to accelerate scientific discovery and therapeutic applications in RNA biology.
 
 <div align="center">
-<img src="./images/PUM2sampling.gif" alt="PUM2 RNA motif generation" width="400">
+<img src="./images/PUM2sampling.gif" alt="PUM2 RNA motif generation" width="400">  
 </div>
 
-*EchoRNA generating RNA sequences containing the UGUA motif known to bind Pumilio-family proteins when conditioned on PUM2 (PDB ID: 3Q0Q) structure.*
+<div align="center">
+<i>EchoRNA generationg RNA sequences containing PUM-specific binding motif (UGUA) when conditioned on PUM2 (PDB ID: 3Q0Q).</i>
+</div>
 
 ### Architecture
 EchoRNA consists of three main components:
 
-1. **Protein Encoder**: GVP-GNN with 6 layers processing residue-level graphs with ESM-2 and ESM-IF embeddings
-2. **RNA Language Model**: RNA-FM with LoRA adaptations applied to attention layers
-3. **Cross-attention Transformer**: Integrates RNA and protein features with timestep conditioning
+1. **Protein Encoder**: GVP-GNN with 6 layers processing residue-level graphs with ESM-2 and ESM-IF embeddings.
+2. **RNA Language Model**: RNA-FM with LoRA adaptations applied to attention layers.
+3. **Cross-attention Transformer**: Integrates RNA and protein features with timestep conditioning.
 
 <div align="center">
 <img src="./images/architecture.png" alt="EchoRNA Architecture" width="600">
@@ -30,7 +32,7 @@ For inquiries regarding the model, generated results, or technical support, plea
 - **Jongmin Lim** (jmlim2@kaist.ac.kr)  
 *Korea Advanced Institute of Science and Technology (KAIST)*
 
-### Content List
+### Content List ### revvise
 - [Dependencies and Requirements](#dependencies-and-requirements)
   - [Software](#software-dependencies)
   - [Computing system](#computing-system-requirements)
@@ -47,7 +49,7 @@ For inquiries regarding the model, generated results, or technical support, plea
 
 ## Dependencies and Requirements
 
-EchoRNA was developed and tested on an NVIDIA L40 GPU with the following OS and Python package dependencies
+EchoRNA was developed and trained on an NVIDIA L40 GPU with the following OS and Python package dependencies
 
 ### Software dependencies
 - CentOS Linux 7 with GCC 4.8.5 and Glibc 2.17
@@ -66,9 +68,18 @@ TBD
 
 
 ## Installation
-### how to do git clone?
+### Cloning the Repository
+'''bash
+cd /path/to/your/desired/folder
+git clone https://github.com/username/repository.git](https://github.com/2yngsklab/EchoRNA.git
+'''
+
+
 
 ### Environment setup
+ link to conda
+ general way to create the environemnt by yaml
+
 Run ./install.sh to set up the Conda environment for EchoRNA.  
 You can customize the installation directory and environment name using the --install-dir and --env-name flags.  
 
@@ -92,6 +103,8 @@ conda activate <ENV_NAME>  # If you specified a custom name
 ```python
 python -c "import torch; print(torch.cuda.is_available())"
 ```
+
+expected output
 
 ### Downloading Model Weight
 TBD  
@@ -137,17 +150,22 @@ output_dir/
 |-- RNA/          # EchoRNA-generated RNAs
 ```
 
+## Other details
+explain what each arguments mean
+
+
 ## Citation
 
 If you use EchoRNA in your research, please cite:
 
 ```bibtex
-@article{2yngsklab2026echorna},
+@article{2yngsklab2026echorna,
   title   = {TBD},
   author  = {Melnichenko, Daniil and Cho, Joohyun and Lim, Jongmin and Yang, Sungchul
              and Back, Haeun and Kim, Dongsup and Lee, Young-suk},
   journal = {TBD},
-  year    = {TBD}
+  year    = {TBD},
+  doi     = {TBD}
 }
 ```
 
