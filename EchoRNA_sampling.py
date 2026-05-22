@@ -479,7 +479,7 @@ def main(protein_path, chain_id, output_dir, name,
     protein_pkl_path = complex_dir / f"{sample_name}_{chain_id}.pickle"
     esm2_pt_path     = esm2_dir    / f"{sample_name}_{chain_id}.pt"
     if_pt_path       = if_dir      / f"{sample_name}_{chain_id}.pt"
-    fasta_path       = rna_dir  / f"{sample_name}_{rna_length}_{random_seed}.fasta"
+    fasta_path       = rna_dir  / f"{sample_name}_{chain_id}_{rna_length}_{random_seed}.fasta"
  
     #  Parse protein and generate embeddings 
     print(f"Parsing protein {protein_path.name}, chain {chain_id}")
