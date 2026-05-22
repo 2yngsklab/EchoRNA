@@ -102,7 +102,8 @@ mv <MODEL_WEIGHT> ./EchoRNA/echorna_weight.pth  # move model weight to the worki
 ## Usage
 
 ```
-python ./EchoRNA/EchoRNA_sampling.py --protein <PROTEIN> --chain <CHAIN> --output-dir <OUTPUT_DIR> [--name <OUTPUT_FILE_NAME>] [--rna-length <LENGTH>] [--num-sequence <NUMBER>] [--sampling-strategy <SAMPLING_STRATEGY>] [--random-seed <RANDOM_SEED>] [--config <CONFIG_PATH>] [''weight <WEIGHT_PATH>] [--GPU]
+cd ./EchoRNA
+python EchoRNA_sampling.py --protein <PROTEIN> --chain <CHAIN> --output-dir <OUTPUT_DIR> [--name <OUTPUT_FILE_NAME>] [--rna-length <LENGTH>] [--num-sequence <NUMBER>] [--sampling-strategy <SAMPLING_STRATEGY>] [--random-seed <RANDOM_SEED>] [--config <CONFIG_PATH>] [''weight <WEIGHT_PATH>] [--GPU]
 ```
 
 ### Required Arguments
