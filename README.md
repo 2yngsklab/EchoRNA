@@ -94,8 +94,10 @@ python -c "import torch; print(torch.cuda.is_available())"
 ```
 
 ### Downloading Model Weight
-TBD
+TBD  
+```bash
 mv <MODEL_WEIGHT> ./EchoRNA/echorna_weight.pth  # move model weight to the working directory
+```
 
 ## Usage
 
