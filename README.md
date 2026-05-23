@@ -134,7 +134,7 @@ python EchoRNA_sampling.py --protein <PROTEIN> --chain <CHAIN> --output-dir <OUT
 - `--weight` : Path to the model weight. (default: "./echorna_weight.pth").
 
 ## Tutorial
-To generate EchoRNAs for PUM2 (PDB ID: 3Q0Q), run one of the following commands:
+To generate EchoRNAs for chain A of PUM2 (PDB ID: 3Q0Q), run one of the following commands:
 
 ```bash
 # Run on CPU
