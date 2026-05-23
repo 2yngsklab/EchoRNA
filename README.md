@@ -45,6 +45,7 @@ For inquiries regarding the model, generated results, or technical support, plea
   - [Optional Arguments](#optional-arguments)
 - [Tutorial](#tutorial)
   - [Output directory](output-directory)
+- [Other Details](#other-details)
 - [Citation](#citation)
 - [License](#license)
 
@@ -161,6 +162,9 @@ output_dir/
 ```
 
 The generated RNA sequences are saved in the `RNA/` directory. The other directories contain processed structure and embedding files used during EchoRNA generation.
+
+## Other Details
+TBD
 
 ## Citation
 
