@@ -1,0 +1,17 @@
+lora_config:
+  r: 64
+  lora_alpha: 128
+  lora_dropout: 0.01
+  merge_weights: false
+  target_modules: ["q_proj", "v_proj", "k_proj", "out_proj", "dense"]
+
+adaptor_config:
+  embed_dim: 640
+  trans_dim: 640
+  num_heads: 20
+  num_trans_layers: 8
+  mlp_ratio: 4
+  time_dim: 128
+  dropout_rate: 0.05
+  gvp_layers: 6
+  node_feature: ["one-hot", "esm-2", "esm-if"]
